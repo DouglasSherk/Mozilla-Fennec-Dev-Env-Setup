@@ -73,7 +73,7 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="19d2", MODE="0666", GROUP="plugdev"' | sudo t
 
 export PATH=$PATH:$HOME/android-sdk-linux/platform-tools:$HOME/android-sdk-linux/tools
 
-if [[ $SKIP_ANDROID_SDK == false && $SKIP_TO_DEVICE == false ]]
+if [ $SKIP_ANDROID_SDK = false && $SKIP_TO_DEVICE = false ]
 then
 echo "Installing prerequisites, using apt-get"
 sudo apt-get -y update
@@ -101,9 +101,9 @@ echo "Cleaning up sdk files"
 rm android-ndk-r5c-linux-x86.tar.bz2
 rm android-sdk_r15-linux.tgz
 
-fi # if [ $SKIP_ANDROID_SDK == false && $SKIP_TO_DEVICE == false ]
+fi # if [ $SKIP_ANDROID_SDK = false && $SKIP_TO_DEVICE = false ]
 
-if [ $SKIP_TO_DEVICE == false ]
+if [ $SKIP_TO_DEVICE = false ]
 then
 
 # To be added
@@ -176,7 +176,7 @@ echo "Installing helper scripts for building and debugging to ~/bin"
 cd ~/Mozilla-Fennec-Dev-Env-Setup
 cp -r bin ~/
 
-fi # if [ $SKIP_TO_DEVICE == false ]
+fi # if [ $SKIP_TO_DEVICE = false ]
 
 echo "Pushing GDB server to device (you have to have rooted it or this will fail)"
 adb shell 'su -c "mount -o remount, -rw /dev/block/stl9 /data; chmod 777 /data/local"'
