@@ -1,25 +1,20 @@
 #!/bin/bash -e
 
-INTERACTIVE=true
-if [ "$1" != "--interactive" ]; then
-  INTERACTIVE=false
+SKIP_ANDROID_SDK=false
+if [ "$1" != "--skip-android-sdk" ]; then
+  SKIP_ANDROID_SDK=true
 fi
-
-function pause() {
-  if [ $INTERACTIVE == true ]; then
-    read -p "Press enter to continue..."
-  fi
-}
 
 USER=$(whoami)
 
 echo "
 Welcome to the Ubuntu 12.04 64-bit Fennec dev env setup script. This will
 do everything you need to start working on Fennec. If you want to install
-interactively, cancel this script now (Ctrl-C) then re-run it with the option
-'--interactive'. The first steps take a very very long time, so please be
-patient. Depending on your computer and whether or not you're using a VM, this
-could literally take an entire day.
+without the Android SDK, cancel this script now (Ctrl-C) then re-run it with 
+the option '--skip-android-sdk' from ~/Mozilla-Fennec-Dev-Env-Setup/setup-fennec.sh
+The first steps take a very very long time, so please be patient. Depending 
+on your computer and whether or not you're using a VM, this could literally 
+take an entire day.
 
 This script is only designed to run a completely fresh install of Ubuntu. It
 will install ALL prerequisites. It will probably work on an already heavily
@@ -39,7 +34,6 @@ cd ~
 # Do this early so we can get everything that needs sudo out of the way
 # and go unguided later
 echo "Setting up USB debugging (make sure your device is plugged in)"
-pause
 echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="04e8", MODE="0666", GROUP="plugdev"
 SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", MODE="0666", GROUP="plugdev"
 SUBSYSTEM=="usb", ATTR{idVendor}=="0502", MODE="0666", GROUP="plugdev"
@@ -75,10 +69,9 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="2340", MODE="0666", GROUP="plugdev"
 SUBSYSTEM=="usb", ATTR{idVendor}=="0930", MODE="0666", GROUP="plugdev"
 SUBSYSTEM=="usb", ATTR{idVendor}=="19d2", MODE="0666", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/51-android.rules
 
-if [ 0 == 1 ]
+if [ $SKIP_ANDROID_SDK == false ]
 then
 echo "Installing prerequisites, using apt-get"
-pause
 sudo apt-get -y update
 # Android SDK and other prereqs
 sudo apt-get -y install openjdk-7-jdk mercurial ccache wget
@@ -92,7 +85,6 @@ sudo apt-get install -y bison flex libncurses5-dev texinfo python2.7-dev git
 echo "Installing Android SDK
 This will take a very long time. If it asks you to input
 a username/password for motorola, just keep hitting enter."
-pause
 LOTS_OF_RETURN="\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 wget http://dl.google.com/android/ndk/android-ndk-r5c-linux-x86.tar.bz2
 tar -xjf android-ndk-r5c-linux-x86.tar.bz2
@@ -104,12 +96,10 @@ echo LOTS_OF_RETURN | ./android-sdk-linux/tools/android update adb
 echo "Cleaning up sdk files"
 rm android-ndk-r5c-linux-x86.tar.bz2
 rm android-sdk_r15-linux.tgz
-fi # if [false]
 
 export PATH=$PATH:$HOME/android-sdk-linux/platform-tools:$HOME/android-sdk-linux/tools
 
 #echo "Increasing linking speed by using gold"
-#pause
 #sudo apt-get install bison flex
 #mkdir ~/gold; pushd ~/gold
 #wget http://ftp.gnu.org/gnu/binutils/binutils-2.22.tar.bz2
@@ -121,7 +111,6 @@ export PATH=$PATH:$HOME/android-sdk-linux/platform-tools:$HOME/android-sdk-linux
 #popd
 
 echo "Cloning new repo into ~/mozilla-central-mobile"
-pause
 cd ~
 hg clone http://hg.mozilla.org/mozilla-central mozilla-central-mobile
 echo "ac_add_options --with-android-ndk=\"$HOME/android-ndk-r5c\"
@@ -138,7 +127,6 @@ mk_add_options MOZ_MAKE_FLAGS=\"-j9 -s\"" > mozilla-central-mobile/.mozconfig
 
 
 echo "Installing JimDB (the current best way to debug C++ on Android)"
-pause
 cd ~
 ##### build gdb
 # install prereqs
@@ -177,17 +165,17 @@ git clone git://github.com/darchons/android-gdbutils.git moz-gdb/utils
 sed "s/#python feninit\.default\.objdir.*/python feninit\.default\.objdir = '\/home\/$USER\/mozilla-central-mobile\/objdir-droid'/" moz-gdb/utils/gdbinit > moz-gdb/utils/gdbinit
 sed "s/#python feninit\.default\.srcroot.*/python feninit\.default\.srcroot = '\/home\/$USER\/mozilla-central-mobile'/" moz-gdb/utils/gdbinit > moz-gdb/utils/gdbinit
 
+fi # if [ $SKIP_ANDROID_SDK == false ]
+
 echo "Installing helper scripts for building and debugging to ~/bin"
-pause
+cd ~/Mozilla-Fennec-Dev-Env-Setup
 cp -r bin ~/
 
 echo "Pushing GDB server to device (you have to have rooted it or this will fail)"
-pause
 adb shell 'su -c "mount -o remount, -rw /dev/block/stl9 /data; chmod 777 /data/local"'
 adb push ~/android-gdbserver-objdir/gdbserver /data/local
 
 echo "Building mozilla-central (located in ~/mozilla-central-mobile)"
-pause
 cd ~/mozilla-central-mobile
 make -f client.mk build_and_deploy
 
