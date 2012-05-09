@@ -32,64 +32,12 @@ IMPORTANT: You must have already rooted your device, and it must be plugged in
 when you move onto the next step. No other setup is required.
 "
 
+cd ~
+
 #read -p "Press enter to continue..."
 
-if [ 0 == 1 ]
-then
-echo "Installing prerequisites, using apt-get"
-pause
-cd ~
-sudo apt-get -y update
-sudo apt-get -y install openjdk-7-jdk mercurial ccache wget
-sudo apt-get -y build-dep firefox
-sudo apt-get -y install eclipse eclipse-jdt
-sudo apt-get -y install ia32-libs
-echo "Installing Android SDK
-This will take a very long time. If it asks you to input
-a username/password for motorola, just keep hitting enter."
-pause
-LOTS_OF_RETURN="\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-wget http://dl.google.com/android/ndk/android-ndk-r5c-linux-x86.tar.bz2
-tar -xjf android-ndk-r5c-linux-x86.tar.bz2
-wget http://dl.google.com/android/android-sdk_r15-linux.tgz
-tar -xzf android-sdk_r15-linux.tgz
-# go get lunch, this will take a while
-echo LOTS_OF_RETURN | ./android-sdk-linux/tools/android update sdk -u
-echo LOTS_OF_RETURN | ./android-sdk-linux/tools/android update adb
-echo "Cleaning up sdk files"
-rm android-ndk-r5c-linux-x86.tar.bz2
-rm android-sdk_r15-linux.tgz
-fi # if [false]
-
-export PATH=$PATH:$HOME/android-sdk-linux/platform-tools:$HOME/android-sdk-linux/tools
-
-#echo "Increasing linking speed by using gold"
-#pause
-#sudo apt-get install bison flex
-#mkdir ~/gold; pushd ~/gold
-#wget http://ftp.gnu.org/gnu/binutils/binutils-2.22.tar.bz2
-#tar xfj binutils-2.22.tar.bz2
-#mkdir binutils-build; pushd binutils-build
-#../binutils-2.22/configure --target=arm-linux-androideabi --prefix=$HOME/gold/arm-linux-androideabi --enable-gold --disable-werror
-#make
-#make install
-#popd
-
-echo "Cloning new repo into ~/mozilla-central-mobile"
-pause
-hg clone http://hg.mozilla.org/mozilla-central mozilla-central-mobile
-echo "ac_add_options --with-android-ndk=\"$HOME/android-ndk-r5c\"
-ac_add_options --with-android-sdk=\"$HOME/android-sdk-linux/platforms/android-13\"
-ac_add_options --with-android-version=5
-
-ac_add_options --enable-application=mobile/android
-ac_add_options --target=arm-linux-androideabi
-ac_add_options --with-ccache
-ac_add_options --enable-tests
-
-mk_add_options MOZ_OBJDIR=./objdir-droid
-mk_add_options MOZ_MAKE_FLAGS=\"-j9 -s\"" > mozilla-central-mobile/.mozconfig
-
+# Do this early so we can get everything that needs sudo out of the way
+# and go unguided later
 echo "Setting up USB debugging (make sure your device is plugged in)"
 pause
 echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="04e8", MODE="0666", GROUP="plugdev"
@@ -127,11 +75,73 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="2340", MODE="0666", GROUP="plugdev"
 SUBSYSTEM=="usb", ATTR{idVendor}=="0930", MODE="0666", GROUP="plugdev"
 SUBSYSTEM=="usb", ATTR{idVendor}=="19d2", MODE="0666", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/51-android.rules
 
+if [ 0 == 1 ]
+then
+echo "Installing prerequisites, using apt-get"
+pause
+sudo apt-get -y update
+# Android SDK and other prereqs
+sudo apt-get -y install openjdk-7-jdk mercurial ccache wget
+sudo apt-get -y build-dep firefox
+# Eclipse and Eclipse Java plugin
+sudo apt-get -y install eclipse eclipse-jdt
+# Libs for running 32-bit binaries
+sudo apt-get -y install ia32-libs
+# Moz-GDB prereqs
+sudo apt-get install -y bison flex libncurses5-dev texinfo python2.7-dev git
+echo "Installing Android SDK
+This will take a very long time. If it asks you to input
+a username/password for motorola, just keep hitting enter."
+pause
+LOTS_OF_RETURN="\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+wget http://dl.google.com/android/ndk/android-ndk-r5c-linux-x86.tar.bz2
+tar -xjf android-ndk-r5c-linux-x86.tar.bz2
+wget http://dl.google.com/android/android-sdk_r15-linux.tgz
+tar -xzf android-sdk_r15-linux.tgz
+# go get lunch, this will take a while
+echo LOTS_OF_RETURN | ./android-sdk-linux/tools/android update sdk -u
+echo LOTS_OF_RETURN | ./android-sdk-linux/tools/android update adb
+echo "Cleaning up sdk files"
+rm android-ndk-r5c-linux-x86.tar.bz2
+rm android-sdk_r15-linux.tgz
+fi # if [false]
+
+export PATH=$PATH:$HOME/android-sdk-linux/platform-tools:$HOME/android-sdk-linux/tools
+
+#echo "Increasing linking speed by using gold"
+#pause
+#sudo apt-get install bison flex
+#mkdir ~/gold; pushd ~/gold
+#wget http://ftp.gnu.org/gnu/binutils/binutils-2.22.tar.bz2
+#tar xfj binutils-2.22.tar.bz2
+#mkdir binutils-build; pushd binutils-build
+#../binutils-2.22/configure --target=arm-linux-androideabi --prefix=$HOME/gold/arm-linux-androideabi --enable-gold --disable-werror
+#make
+#make install
+#popd
+
+echo "Cloning new repo into ~/mozilla-central-mobile"
+pause
+cd ~
+hg clone http://hg.mozilla.org/mozilla-central mozilla-central-mobile
+echo "ac_add_options --with-android-ndk=\"$HOME/android-ndk-r5c\"
+ac_add_options --with-android-sdk=\"$HOME/android-sdk-linux/platforms/android-13\"
+ac_add_options --with-android-version=5
+
+ac_add_options --enable-application=mobile/android
+ac_add_options --target=arm-linux-androideabi
+ac_add_options --with-ccache
+ac_add_options --enable-tests
+
+mk_add_options MOZ_OBJDIR=./objdir-droid
+mk_add_options MOZ_MAKE_FLAGS=\"-j9 -s\"" > mozilla-central-mobile/.mozconfig
+
+
 echo "Installing JimDB (the current best way to debug C++ on Android)"
 pause
+cd ~
 ##### build gdb
 # install prereqs
-sudo apt-get install -y bison flex libncurses5-dev texinfo python2.7-dev git
 # clone repo
 git clone git://github.com/darchons/android-gdb.git
 (cd android-gdb && git checkout android-gdb_7_3)
@@ -178,7 +188,7 @@ adb push ~/android-gdbserver-objdir/gdbserver /data/local
 
 echo "Building mozilla-central (located in ~/mozilla-central-mobile)"
 pause
-cd mozilla-central-mobile
+cd ~/mozilla-central-mobile
 make -f client.mk build_and_deploy
 
 echo "You are now ready to use your Fennec dev env. Suggested next steps: add
