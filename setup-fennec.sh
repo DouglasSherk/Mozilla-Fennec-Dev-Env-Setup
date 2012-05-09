@@ -1,8 +1,12 @@
 #!/bin/bash -e
 
 SKIP_ANDROID_SDK=false
+SKIP_TO_DEVICE=false
 if [ "$1" == "--skip-android-sdk" ]; then
   SKIP_ANDROID_SDK=true
+fi
+if [ "$1" == "--skip-to-device"]; then
+  SKIP_TO_DEVICE=true
 fi
 
 USER=$(whoami)
@@ -69,7 +73,7 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="19d2", MODE="0666", GROUP="plugdev"' | sudo t
 
 export PATH=$PATH:$HOME/android-sdk-linux/platform-tools:$HOME/android-sdk-linux/tools
 
-if [ $SKIP_ANDROID_SDK == false ]
+if [ $SKIP_ANDROID_SDK == false && $SKIP_TO_DEVICE == false ]
 then
 echo "Installing prerequisites, using apt-get"
 sudo apt-get -y update
@@ -96,6 +100,11 @@ echo LOTS_OF_RETURN | ./android-sdk-linux/tools/android update adb
 echo "Cleaning up sdk files"
 rm android-ndk-r5c-linux-x86.tar.bz2
 rm android-sdk_r15-linux.tgz
+
+fi # if [ $SKIP_ANDROID_SDK == false && $SKIP_TO_DEVICE == false ]
+
+if [ $SKIP_TO_DEVICE == false ]
+then
 
 # To be added
 #echo "Increasing linking speed by using gold"
@@ -163,11 +172,11 @@ git clone git://github.com/darchons/android-gdbutils.git moz-gdb/utils
 sed "s/#python feninit\.default\.objdir.*/python feninit\.default\.objdir = '\/home\/$USER\/mozilla-central-mobile\/objdir-droid'/" moz-gdb/utils/gdbinit > moz-gdb/utils/gdbinit
 sed "s/#python feninit\.default\.srcroot.*/python feninit\.default\.srcroot = '\/home\/$USER\/mozilla-central-mobile'/" moz-gdb/utils/gdbinit > moz-gdb/utils/gdbinit
 
-fi # if [ $SKIP_ANDROID_SDK == false ]
-
 echo "Installing helper scripts for building and debugging to ~/bin"
 cd ~/Mozilla-Fennec-Dev-Env-Setup
 cp -r bin ~/
+
+fi # if [ $SKIP_TO_DEVICE == false ]
 
 echo "Pushing GDB server to device (you have to have rooted it or this will fail)"
 adb shell 'su -c "mount -o remount, -rw /dev/block/stl9 /data; chmod 777 /data/local"'
