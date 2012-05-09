@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 SKIP_ANDROID_SDK=false
-if [ "$1" != "--skip-android-sdk" ]; then
+if [ "$1" == "--skip-android-sdk" ]; then
   SKIP_ANDROID_SDK=true
 fi
 
@@ -28,8 +28,6 @@ when you move onto the next step. No other setup is required.
 "
 
 cd ~
-
-#read -p "Press enter to continue..."
 
 # Do this early so we can get everything that needs sudo out of the way
 # and go unguided later
@@ -69,6 +67,8 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="2340", MODE="0666", GROUP="plugdev"
 SUBSYSTEM=="usb", ATTR{idVendor}=="0930", MODE="0666", GROUP="plugdev"
 SUBSYSTEM=="usb", ATTR{idVendor}=="19d2", MODE="0666", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/51-android.rules
 
+export PATH=$PATH:$HOME/android-sdk-linux/platform-tools:$HOME/android-sdk-linux/tools
+
 if [ $SKIP_ANDROID_SDK == false ]
 then
 echo "Installing prerequisites, using apt-get"
@@ -97,8 +97,7 @@ echo "Cleaning up sdk files"
 rm android-ndk-r5c-linux-x86.tar.bz2
 rm android-sdk_r15-linux.tgz
 
-export PATH=$PATH:$HOME/android-sdk-linux/platform-tools:$HOME/android-sdk-linux/tools
-
+# To be added
 #echo "Increasing linking speed by using gold"
 #sudo apt-get install bison flex
 #mkdir ~/gold; pushd ~/gold
@@ -129,7 +128,6 @@ mk_add_options MOZ_MAKE_FLAGS=\"-j9 -s\"" > mozilla-central-mobile/.mozconfig
 echo "Installing JimDB (the current best way to debug C++ on Android)"
 cd ~
 ##### build gdb
-# install prereqs
 # clone repo
 git clone git://github.com/darchons/android-gdb.git
 (cd android-gdb && git checkout android-gdb_7_3)
