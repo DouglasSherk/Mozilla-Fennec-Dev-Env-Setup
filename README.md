@@ -5,6 +5,9 @@ A set of scripts to automate the Fennec setup process.
 
 # Install
 
+Copy and paste this into a terminal. Note that you don't even have to have git
+installed, though this will install git for you.
+
 ``
 wget https://github.com/DouglasSherk/Mozilla-Fennec-Dev-Env-Setup/raw/master/bootstrap.sh -O - | sh
 ``
