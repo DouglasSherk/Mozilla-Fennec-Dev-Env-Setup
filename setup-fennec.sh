@@ -73,7 +73,7 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="19d2", MODE="0666", GROUP="plugdev"' | sudo t
 
 export PATH=$PATH:$HOME/android-sdk-linux/platform-tools:$HOME/android-sdk-linux/tools
 
-if [ $SKIP_ANDROID_SDK == false && $SKIP_TO_DEVICE == false ]
+if [ $SKIP_ANDROID_SDK == false ] && [ $SKIP_TO_DEVICE == false ]
 then
 echo "Installing prerequisites, using apt-get"
 sudo apt-get -y update
