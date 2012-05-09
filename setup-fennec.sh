@@ -34,7 +34,7 @@ when you move onto the next step. No other setup is required.
 
 read -p "Press enter to continue..."
 
-if [ 1 == 1 ]
+if [ 0 == 1 ]
 then
 echo "Installing prerequisites, using apt-get"
 pause
@@ -62,9 +62,6 @@ rm android-sdk_r15-linux.tgz
 fi # if [false]
 
 export PATH=$PATH:$HOME/android-sdk-linux/platform-tools:$HOME/android-sdk-linux/tools
-
-echo "bailing for snapshot"
-exit
 
 #echo "Increasing linking speed by using gold"
 #pause
