@@ -32,7 +32,7 @@ IMPORTANT: You must have already rooted your device, and it must be plugged in
 when you move onto the next step. No other setup is required.
 "
 
-read -p "Press enter to continue..."
+#read -p "Press enter to continue..."
 
 if [ 0 == 1 ]
 then
