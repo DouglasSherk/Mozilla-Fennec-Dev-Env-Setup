@@ -11,9 +11,9 @@ wget https://github.com/DouglasSherk/Mozilla-Fennec-Dev-Env-Setup/raw/master/boo
 
 # Requirements
 
-1) Must be running Ubuntu 12.04, 64-bit. Ideally it should be a fresh install.
-2) Must have already rooted phone.
-3) Phone must be plugged in.
+- Must be running Ubuntu 12.04, 64-bit. Ideally it should be a fresh install.
+- Must have already rooted phone.
+- Phone must be plugged in.
 
 # What it does
 
