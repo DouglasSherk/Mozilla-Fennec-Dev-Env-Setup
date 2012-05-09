@@ -1,0 +1,3 @@
+#/bin/bash -e
+(cd ~/mozilla-central-mobile &&
+ make -f client.mk build_and_deploy)

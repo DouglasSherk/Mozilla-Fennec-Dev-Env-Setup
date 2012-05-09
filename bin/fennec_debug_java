@@ -1,0 +1,41 @@
+#/bin/bash -e
+echo "q\ny\n" | ~/moz-gdb/bin/gdb
+PORT=$(adb jdwp)
+adb -d forward tcp:8686 jdwp:$PORT
+eclipse &
+echo "Eclipse is now ready for debugging. Create a Java project.
+
+To use it, click on:
+Window > Open Perspective > DDMS, then on the far left, look at
+the 'Devices' section. Expand the one that matches your device,
+then click on 'org.mozilla.fennec_username'. Just highlighting it
+is enough.
+
+NOTE IF THIS IS YOUR FIRST TIME USING THIS: You will also have to
+perform the following (for every repo you clone):
+1) Navigate to /home/$USER/mozilla-central-mobile/android
+2) Create a directory here called 'org'
+3) Inside this directory, create another directory called 'mozilla'
+4) Inside this directory, create a symlink pointing to '../../base' like so:
+  ln -s ../../base .
+5) OPTIONAL: 
+  i) Open /home/$USER/mozilla-central-mobile/config/android-common.mk
+  ii) Find '-g:source,lines \\' near line 75
+  iii) Replace this line with '-g:source,lines,vars \\'
+
+Next, do the following:
+1) Click Run > Debug Configurations
+2) Click on 'Remote Java Application'
+3) Create a new configuration (call it whatever)
+4) In connection properties, enter:
+  i) Host: localhost
+  ii) Port: 8700
+5) Click on the 'Source' tab
+6) Add to it the path: /home/$USER/mozilla-central-mobile/mobile
+
+Whether this was your first time or not, you now have to click:
+Run > Debug Configurations > (your config name)
+
+If in the bottom, under the section LogCat, it says 'Debugger is active',
+you were successful. You can now switch to the 'Debug' perspective and add
+breakpoints or debug like usual."
