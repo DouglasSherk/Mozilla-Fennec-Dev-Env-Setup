@@ -5,7 +5,7 @@ SKIP_TO_DEVICE=false
 if [ "$1" == "--skip-android-sdk" ]; then
   SKIP_ANDROID_SDK=true
 fi
-if [ "$1" == "--skip-to-device"]; then
+if [ "$1" == "--skip-to-device" ]; then
   SKIP_TO_DEVICE=true
 fi
 
@@ -32,6 +32,10 @@ when you move onto the next step. No other setup is required.
 "
 
 cd ~
+export PATH=$PATH:$HOME/android-sdk-linux/platform-tools:$HOME/android-sdk-linux/tools
+
+if [[ $SKIP_ANDROID_SDK = false && $SKIP_TO_DEVICE = false ]]
+then
 
 # Do this early so we can get everything that needs sudo out of the way
 # and go unguided later
@@ -71,10 +75,6 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="2340", MODE="0666", GROUP="plugdev"
 SUBSYSTEM=="usb", ATTR{idVendor}=="0930", MODE="0666", GROUP="plugdev"
 SUBSYSTEM=="usb", ATTR{idVendor}=="19d2", MODE="0666", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/51-android.rules
 
-export PATH=$PATH:$HOME/android-sdk-linux/platform-tools:$HOME/android-sdk-linux/tools
-
-if [[ $SKIP_ANDROID_SDK = false && $SKIP_TO_DEVICE = false ]]
-then
 echo "Installing prerequisites, using apt-get"
 sudo apt-get -y update
 # Android SDK and other prereqs
