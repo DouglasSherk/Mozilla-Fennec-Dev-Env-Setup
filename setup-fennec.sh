@@ -130,6 +130,9 @@ ac_add_options --target=arm-linux-androideabi
 ac_add_options --with-ccache
 ac_add_options --enable-tests
 
+ac_add_options --disable-optimize
+ac_add_options --enable-debug
+
 mk_add_options MOZ_OBJDIR=./objdir-droid
 mk_add_options MOZ_MAKE_FLAGS=\"-j9 -s\"" > mozilla-central-mobile/.mozconfig
 
