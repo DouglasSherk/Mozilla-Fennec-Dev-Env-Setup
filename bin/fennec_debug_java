@@ -16,8 +16,9 @@ perform the following (for every repo you clone):
 1) Navigate to /home/$USER/mozilla-central-mobile/android
 2) Create a directory here called 'org'
 3) Inside this directory, create another directory called 'mozilla'
-4) Inside this directory, create a symlink pointing to '../../base' like so:
-  ln -s ../../base .
+4) Inside this directory, create a symlink called 'gecko' pointing to
+   '../../base' like so:
+  ln -s ../../base gecko
 5) OPTIONAL: 
   i) Open /home/$USER/mozilla-central-mobile/config/android-common.mk
   ii) Find '-g:source,lines \\' near line 75
