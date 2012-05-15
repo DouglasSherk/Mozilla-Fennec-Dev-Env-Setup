@@ -106,17 +106,20 @@ fi # if [ $SKIP_ANDROID_SDK = false && $SKIP_TO_DEVICE = false ]
 if [ $SKIP_TO_DEVICE = false ]
 then
 
-# To be added
-#echo "Increasing linking speed by using gold"
-#sudo apt-get install bison flex
-#mkdir ~/gold; pushd ~/gold
-#wget http://ftp.gnu.org/gnu/binutils/binutils-2.22.tar.bz2
-#tar xfj binutils-2.22.tar.bz2
-#mkdir binutils-build; pushd binutils-build
-#../binutils-2.22/configure --target=arm-linux-androideabi --prefix=$HOME/gold/arm-linux-androideabi --enable-gold --disable-werror
-#make
-#make install
-#popd
+echo "Increasing linking speed by using gold"
+mkdir ~/gold; pushd ~/gold
+wget http://ftp.gnu.org/gnu/binutils/binutils-2.22.tar.bz2
+tar xfj binutils-2.22.tar.bz2
+mkdir binutils-build; pushd binutils-build
+../binutils-2.22/configure --target=arm-linux-androideabi --prefix=$HOME/gold/arm-linux-androideabi --enable-gold --disable-werror
+make
+make install
+popd
+# Copy the new binaries over
+cp ~/gold/arm-linux-androideabi/bin/arm-linux-androideabi-ld.gold \
+  ~/android-ndk-r5c/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/arm-linux-androideabi/bin/ld
+cp ~/gold/arm-linux-androideabi/bin/arm-linux-androideabi-ld.gold \
+  ~/android-ndk-r5c/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin/arm-linux-androideabi-ld
 
 echo "Cloning new repo into ~/mozilla-central-mobile"
 cd ~
