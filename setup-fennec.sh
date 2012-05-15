@@ -95,7 +95,14 @@ tar -xjf android-ndk-r5c-linux-x86.tar.bz2
 wget http://dl.google.com/android/android-sdk_r15-linux.tgz
 tar -xzf android-sdk_r15-linux.tgz
 # go get lunch, this will take a while
+# run this twice; kill it after 10 seconds then again to get a better mirror
+PID=$(./android-sdk-linux/tools/android update sdk -u &)
+sleep 10
+kill -9 $PID
 echo LOTS_OF_RETURN | ./android-sdk-linux/tools/android update sdk -u
+PID=$(./android-sdk-linux/tools/android update adb &)
+sleep 10
+kill -9 $PID
 echo LOTS_OF_RETURN | ./android-sdk-linux/tools/android update adb
 echo "Cleaning up sdk files"
 rm android-ndk-r5c-linux-x86.tar.bz2
@@ -138,7 +145,6 @@ ac_add_options --enable-debug
 
 mk_add_options MOZ_OBJDIR=./objdir-droid
 mk_add_options MOZ_MAKE_FLAGS=\"-j9 -s\"" > mozilla-central-mobile/.mozconfig
-
 
 echo "Installing JimDB (the current best way to debug C++ on Android)"
 cd ~
