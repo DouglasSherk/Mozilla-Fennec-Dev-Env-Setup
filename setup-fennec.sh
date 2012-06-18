@@ -125,7 +125,7 @@ echo "Cloning new repo into ~/mozilla-central-mobile"
 cd ~
 hg clone http://hg.mozilla.org/mozilla-central mozilla-central-mobile
 echo "ac_add_options --with-android-ndk=\"$HOME/android-ndk-r5c\"
-ac_add_options --with-android-sdk=\"$HOME/android-sdk-linux/platforms/android-13\"
+ac_add_options --with-android-sdk=\"$HOME/android-sdk-linux/platforms/android-14\"
 ac_add_options --with-android-version=5
 
 ac_add_options --enable-application=mobile/android
